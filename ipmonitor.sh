@@ -20,6 +20,7 @@ TO_EMAIL_ADDR=$1
 FROM_EMAIL_ADDR="abraham.simpson@oldmanyellsat.cloud"
 FROM_EMAIL_NAME="Abraham Simpson"
 EMAIL_SUBJECT="IP Address Update: ${HOSTNAME}"
+EMAIL_BODY="IP address of machine ${HOSTNAME} has changed: ${OLD_IP} -> ${NEW_IP}"
 
 SENDGRID_API_KEY=`cat $API_KEY_FILE`
 [[ -f $LAST_IP_FILE ]] && OLD_IP=`cat $LAST_IP_FILE` || OLD_IP="(none)"
@@ -32,7 +33,7 @@ if [[ $OLD_IP != $NEW_IP ]]; then
       --url https://api.sendgrid.com/v3/mail/send \
       --header "Authorization: Bearer ${SENDGRID_API_KEY}" \
       --header 'Content-Type: application/json' \
-      --data "{\"personalizations\": [{\"to\": [{\"email\": \"${TO_EMAIL_ADDR}\"}]}],\"from\": {\"email\": \"${FROM_EMAIL_ADDR}\", \"name\": \"${FROM_EMAIL_NAME}\"},\"subject\": \"${EMAIL_SUBJECT}\",\"content\": [{\"type\": \"text/plain\", \"value\": \"IP address of machine ${HOSTNAME} has changed: ${OLD_IP} -> ${NEW_IP}\"}]}"
+      --data "{\"personalizations\": [{\"to\": [{\"email\": \"${TO_EMAIL_ADDR}\"}]}],\"from\": {\"email\": \"${FROM_EMAIL_ADDR}\", \"name\": \"${FROM_EMAIL_NAME}\"},\"subject\": \"${EMAIL_SUBJECT}\",\"content\": [{\"type\": \"text/plain\", \"value\": \"${EMAIL_BODY}\"}]}"
 else
     echo "IP still ${NEW_IP}, nothing to do"
 fi
